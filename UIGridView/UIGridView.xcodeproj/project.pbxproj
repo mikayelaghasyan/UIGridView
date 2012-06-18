@@ -10,11 +10,12 @@
 		43FFD555158F167700B5A453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD554158F167700B5A453 /* Foundation.framework */; };
 		43FFD55B158F167700B5A453 /* UIGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FFD55A158F167700B5A453 /* UIGridView.m */; };
 		43FFD563158F167700B5A453 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD562158F167700B5A453 /* SenTestingKit.framework */; };
-		43FFD565158F167700B5A453 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD564158F167700B5A453 /* UIKit.framework */; };
 		43FFD566158F167700B5A453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD554158F167700B5A453 /* Foundation.framework */; };
 		43FFD569158F167700B5A453 /* libUIGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD551158F167700B5A453 /* libUIGridView.a */; };
 		43FFD56F158F167700B5A453 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 43FFD56D158F167700B5A453 /* InfoPlist.strings */; };
 		43FFD572158F167700B5A453 /* UIGridViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FFD571158F167700B5A453 /* UIGridViewTests.m */; };
+		43FFD5C1158F1A0700B5A453 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD5BF158F18A100B5A453 /* UIKit.framework */; };
+		43FFD5C2158F1A0C00B5A453 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD5BF158F18A100B5A453 /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,11 +36,11 @@
 		43FFD55A158F167700B5A453 /* UIGridView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIGridView.m; sourceTree = "<group>"; };
 		43FFD561158F167700B5A453 /* UIGridViewTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UIGridViewTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FFD562158F167700B5A453 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		43FFD564158F167700B5A453 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		43FFD56C158F167700B5A453 /* UIGridViewTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UIGridViewTests-Info.plist"; sourceTree = "<group>"; };
 		43FFD56E158F167700B5A453 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		43FFD570158F167700B5A453 /* UIGridViewTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIGridViewTests.h; sourceTree = "<group>"; };
 		43FFD571158F167700B5A453 /* UIGridViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UIGridViewTests.m; sourceTree = "<group>"; };
+		43FFD5BF158F18A100B5A453 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +49,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43FFD555158F167700B5A453 /* Foundation.framework in Frameworks */,
+				43FFD5C1158F1A0700B5A453 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,9 +58,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				43FFD563158F167700B5A453 /* SenTestingKit.framework in Frameworks */,
-				43FFD565158F167700B5A453 /* UIKit.framework in Frameworks */,
 				43FFD566158F167700B5A453 /* Foundation.framework in Frameworks */,
 				43FFD569158F167700B5A453 /* libUIGridView.a in Frameworks */,
+				43FFD5C2158F1A0C00B5A453 /* UIKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,8 +90,8 @@
 			isa = PBXGroup;
 			children = (
 				43FFD554158F167700B5A453 /* Foundation.framework */,
+				43FFD5BF158F18A100B5A453 /* UIKit.framework */,
 				43FFD562158F167700B5A453 /* SenTestingKit.framework */,
-				43FFD564158F167700B5A453 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
