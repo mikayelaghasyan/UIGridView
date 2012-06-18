@@ -44,6 +44,12 @@ typedef enum {
 // Vertical alignment of cell within available space. Default is UIGridViewCellVerticalAlignmentCenter.
 - (UIGridViewCellVerticalAlignment)gridView:(UIGridView *)gridView verticalAlignmentForCellAtIndexPath:(NSIndexPath *)indexPath;
 
+- (CGFloat)gridView:(UIGridView *)gridView heightForHeaderInSection:(NSUInteger)section;
+- (CGFloat)gridView:(UIGridView *)gridView heightForFooterInSection:(NSUInteger)section;
+
+- (UIView *)gridView:(UIGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
+- (UIView *)gridView:(UIGridView *)gridView viewForFooterInSection:(NSUInteger)section;
+
 @end
 
 @class UIGridViewCell;
@@ -63,7 +69,9 @@ typedef enum {
 
 @interface UIGridViewCell : UIView
 
-@property (nonatomic, readonly) NSString *reuseIdentifier;
+@property (copy, nonatomic, readonly) NSString *reuseIdentifier;
+
+- (id)initWithReuseIdentifier:(NSString *)identifier;
 
 @end
 
@@ -76,6 +84,9 @@ typedef enum {
 
 // Number of columns in section. Return 0 to dynamically calculate number of columns to fill available width. Default is 0.
 - (NSUInteger)gridView:(UIGridView *)gridView numberOfColumnsInSection:(NSUInteger)section;
+
+- (NSString *)gridView:(UIGridView *)gridView titleForHeaderInSection:(NSUInteger)section;
+- (NSString *)gridView:(UIGridView *)gridView titleForFooterInSection:(NSUInteger)section;
 
 @required
 

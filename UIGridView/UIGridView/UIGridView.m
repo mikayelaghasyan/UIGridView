@@ -40,8 +40,22 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 @end
 
+@interface UIGridViewCell ()
+
+@property (copy, nonatomic) NSString *reuseIdentifier;
+
+@end
+
 @implementation UIGridViewCell
 
 @synthesize reuseIdentifier = _reuseIdentifier;
+
+- (id)initWithReuseIdentifier:(NSString *)identifier {
+	self = [super init];
+	if (self) {
+		self.reuseIdentifier = identifier;
+	}
+	return self;
+}
 
 @end
