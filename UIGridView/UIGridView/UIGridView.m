@@ -7,6 +7,7 @@
 //
 
 #import "UIGridView.h"
+#import "NSMutableArray+Queue.h"
 
 static NSUInteger const kIndexPathIndexesCount = 2;
 
@@ -27,6 +28,14 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 @end
 
+@interface UIGridView ()
+
+@property (strong, nonatomic) NSMutableDictionary *cellQueueDictionary;
+
+- (void)enqueReusableCell:(UIGridViewCell *)cell;
+
+@end
+
 @implementation UIGridView
 
 @synthesize dataSource = _gvDataSource;
@@ -34,8 +43,34 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @synthesize cellSize = _cellSize;
 @synthesize cellInsets = _cellInsets;
 
+@synthesize cellQueueDictionary = _cellQueueDictionary;
+
+- (NSMutableDictionary *)cellQueueDictionary {
+	if (!_cellQueueDictionary) {
+		_cellQueueDictionary = [[NSMutableDictionary alloc] init];
+	}
+	return _cellQueueDictionary;
+}
+
+- (void)enqueReusableCell:(UIGridViewCell *)cell {
+	NSMutableArray *queue = [self.cellQueueDictionary objectForKey:cell.reuseIdentifier];
+	if (!queue) {
+		queue = [[NSMutableArray alloc] init];
+		[self.cellQueueDictionary setObject:queue forKey:cell.reuseIdentifier];
+	}
+	[queue enque:cell];
+}
+
 - (UIGridViewCell *)dequeReusableCellWithIdentifier:(NSString *)identifier {
-	return nil;
+	UIGridViewCell *cell = nil;
+	NSMutableArray *queue = [self.cellQueueDictionary objectForKey:cell.reuseIdentifier];
+	if (queue) {
+		cell = [queue deque];
+	}
+	return cell;
+}
+
+- (void)reloadData {
 }
 
 @end

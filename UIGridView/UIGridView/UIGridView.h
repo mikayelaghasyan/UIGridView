@@ -64,6 +64,7 @@ typedef enum {
 @property (assign, nonatomic) UIEdgeInsets cellInsets;
 
 - (UIGridViewCell *)dequeReusableCellWithIdentifier:(NSString *)identifier;
+- (void)reloadData;
 
 @end
 

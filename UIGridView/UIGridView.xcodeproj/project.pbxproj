@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43D8742915ADB7EC00231127 /* NSMutableArray+Queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D8742715ADB7EC00231127 /* NSMutableArray+Queue.h */; };
+		43D8742A15ADB7EC00231127 /* NSMutableArray+Queue.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D8742815ADB7EC00231127 /* NSMutableArray+Queue.m */; };
 		43FFD555158F167700B5A453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD554158F167700B5A453 /* Foundation.framework */; };
 		43FFD55B158F167700B5A453 /* UIGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FFD55A158F167700B5A453 /* UIGridView.m */; };
 		43FFD563158F167700B5A453 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD562158F167700B5A453 /* SenTestingKit.framework */; };
@@ -29,6 +31,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		43D8742715ADB7EC00231127 /* NSMutableArray+Queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Queue.h"; sourceTree = "<group>"; };
+		43D8742815ADB7EC00231127 /* NSMutableArray+Queue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Queue.m"; sourceTree = "<group>"; };
 		43FFD551158F167700B5A453 /* libUIGridView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUIGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FFD554158F167700B5A453 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		43FFD558158F167700B5A453 /* UIGridView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIGridView-Prefix.pch"; sourceTree = "<group>"; };
@@ -102,6 +106,8 @@
 				43FFD559158F167700B5A453 /* UIGridView.h */,
 				43FFD55A158F167700B5A453 /* UIGridView.m */,
 				43FFD557158F167700B5A453 /* Supporting Files */,
+				43D8742715ADB7EC00231127 /* NSMutableArray+Queue.h */,
+				43D8742815ADB7EC00231127 /* NSMutableArray+Queue.m */,
 			);
 			path = UIGridView;
 			sourceTree = "<group>";
@@ -140,6 +146,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43D8742915ADB7EC00231127 /* NSMutableArray+Queue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43FFD55B158F167700B5A453 /* UIGridView.m in Sources */,
+				43D8742A15ADB7EC00231127 /* NSMutableArray+Queue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +398,7 @@
 				43FFD577158F167700B5A453 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		43FFD578158F167700B5A453 /* Build configuration list for PBXNativeTarget "UIGridViewTests" */ = {
 			isa = XCConfigurationList;
@@ -398,6 +407,7 @@
 				43FFD57A158F167700B5A453 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
