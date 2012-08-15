@@ -61,7 +61,14 @@ typedef enum {
 @property (weak, nonatomic) id<UIGridViewDelegate> delegate;
 
 @property (assign, nonatomic) CGSize cellSize;
-@property (assign, nonatomic) UIEdgeInsets cellInsets;
+@property (assign, nonatomic) UIEdgeInsets cellPreferredInsets;
+@property (assign, nonatomic) UIGridViewCellHorizontalAlignment cellHorizontalAlignment;
+@property (assign, nonatomic) UIGridViewCellVerticalAlignment cellVerticalAlignment;
+@property (assign, nonatomic) CGFloat sectionHeaderHeight;
+@property (assign, nonatomic) CGFloat sectionFooterHeight;
+
+@property (strong, nonatomic) UIView *gridHeaderView;
+@property (strong, nonatomic) UIView *gridFooterView;
 
 - (UIGridViewCell *)dequeReusableCellWithIdentifier:(NSString *)identifier;
 - (void)reloadData;
@@ -71,6 +78,7 @@ typedef enum {
 @interface UIGridViewCell : UIView
 
 @property (copy, nonatomic, readonly) NSString *reuseIdentifier;
+@property (strong, nonatomic, readonly) UIView *contentView;
 
 - (id)initWithReuseIdentifier:(NSString *)identifier;
 
