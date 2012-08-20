@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		43D8742915ADB7EC00231127 /* NSMutableArray+Queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D8742715ADB7EC00231127 /* NSMutableArray+Queue.h */; };
 		43D8742A15ADB7EC00231127 /* NSMutableArray+Queue.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D8742815ADB7EC00231127 /* NSMutableArray+Queue.m */; };
+		43EAABAB15E26F6E00502AA2 /* UIGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = 43FFD559158F167700B5A453 /* UIGridView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		43FFD555158F167700B5A453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD554158F167700B5A453 /* Foundation.framework */; };
 		43FFD55B158F167700B5A453 /* UIGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FFD55A158F167700B5A453 /* UIGridView.m */; };
 		43FFD563158F167700B5A453 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD562158F167700B5A453 /* SenTestingKit.framework */; };
@@ -147,6 +148,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43D8742915ADB7EC00231127 /* NSMutableArray+Queue.h in Headers */,
+				43EAABAB15E26F6E00502AA2 /* UIGridView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,6 +335,7 @@
 				GCC_PREFIX_HEADER = "UIGridView/UIGridView-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -345,6 +348,7 @@
 				GCC_PREFIX_HEADER = "UIGridView/UIGridView-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

@@ -139,6 +139,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @property (strong, nonatomic) NSIndexPath *firstVisibleCellIndexPath;
 @property (strong, nonatomic) NSIndexPath *lastVisibleCellIndexPath;
 @property (assign, nonatomic) BOOL needsUpdateCellsInfo;
+@property (assign, nonatomic) CGRect lastBounds;
 
 - (void)initGridView;
 - (void)enqueReusableCell:(UIGridViewCell *)cell;
@@ -175,6 +176,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @synthesize firstVisibleCellIndexPath = _firstVisibleCellIndexPath;
 @synthesize lastVisibleCellIndexPath = _lastVisibleCellIndexPath;
 @synthesize needsUpdateCellsInfo = _needsUpdateCellsInfo;
+@synthesize lastBounds = _lastBounds;
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
 	self = [super initWithCoder:aDecoder];
@@ -193,18 +195,25 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 }
 
 - (void)initGridView {
+	self.directionalLockEnabled = YES;
 	self.needsUpdateCellsInfo = YES;
 	self.firstVisibleSection = -1;
 	self.lastVisibleSection = -1;
 }
 
 - (void)layoutSubviews {
+	BOOL boundsChanged = !CGRectEqualToRect(self.bounds, self.lastBounds);
+	if (boundsChanged) {
+		[self cleanGridView];
+	}
 	if (self.needsUpdateCellsInfo) {
 		self.needsUpdateCellsInfo = NO;
-		[self cleanGridView];
 		[self updateCellsInfo];
 	}
-	[self calculateFrames];
+	if (boundsChanged) {
+		[self calculateFrames];
+		self.lastBounds = self.bounds;
+	}
 	[self layoutGridView];
 }
 
@@ -334,7 +343,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 	NSInteger firstVisibleSection = (self.firstVisibleSection > -1) ? self.firstVisibleSection : 0;
 	UIGridViewSectionInfo *sectionInfo = [self.sectionsInfo objectAtIndex:firstVisibleSection];
-	while (sectionInfo.origin.y <= self.contentOffset.y && sectionInfo.origin.y + sectionInfo.size.height > self.contentOffset.y) {
+	while (sectionInfo.origin.y > self.contentOffset.y || sectionInfo.origin.y + sectionInfo.size.height <= self.contentOffset.y) {
 		if (sectionInfo.origin.y > self.contentOffset.y) {
 			if (firstVisibleSection > 0) {
 				firstVisibleSection--;
@@ -352,8 +361,8 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	}
 	NSInteger lastVisibleSection = (self.lastVisibleSection > -1) ? self.lastVisibleSection : firstVisibleSection;
 	sectionInfo = [self.sectionsInfo objectAtIndex:lastVisibleSection];
-	while (sectionInfo.origin.y < self.contentOffset.y + self.bounds.size.height &&
-		   sectionInfo.origin.y + sectionInfo.size.height >= self.contentOffset.y + self.bounds.size.height) {
+	while (sectionInfo.origin.y >= self.contentOffset.y + self.bounds.size.height ||
+		   sectionInfo.origin.y + sectionInfo.size.height < self.contentOffset.y + self.bounds.size.height) {
 		if (sectionInfo.origin.y >= self.contentOffset.y + self.bounds.size.height) {
 			if (lastVisibleSection > firstVisibleSection) {
 				lastVisibleSection--;
@@ -419,9 +428,15 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 		endIndexPath = self.lastVisibleCellIndexPath;
 	}
 	sectionInfo = nil;
+	CGFloat columnWidth = 0;
 	for (NSIndexPath *indexPath = startIndexPath; indexPath && [indexPath compare:endIndexPath] != NSOrderedDescending; indexPath = [self nextIndexPath:indexPath]) {
 		if (!sectionInfo || sectionInfo.sectionIndex != indexPath.section) {
 			sectionInfo = [self.sectionsInfo objectAtIndex:indexPath.section];
+			if (sectionInfo.actualNumberOfColumns * sectionInfo.sectionColumnWidth < self.bounds.size.width) {
+				columnWidth = self.bounds.size.width / sectionInfo.actualNumberOfColumns;
+			} else {
+				columnWidth = sectionInfo.sectionColumnWidth;
+			}
 		}
 		UIGridViewCellInfo *cellInfo = [sectionInfo.cellsInfo objectAtIndex:indexPath.cellIndex];
 		if ([indexPath compare:firstVisibleCellIndexPath] == NSOrderedAscending || [indexPath compare:lastVisibleCellIndexPath] == NSOrderedDescending) {
@@ -432,16 +447,18 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 			}
 		} else {
 			if (!cellInfo.cellView) {
-				UIGridViewCell *cell = [self.dataSource gridView:self cellAtIndexPath:indexPath];
+				cellInfo.cellView = [self.dataSource gridView:self cellAtIndexPath:indexPath];
 				NSInteger row = indexPath.cellIndex / sectionInfo.actualNumberOfColumns;
 				NSInteger column = indexPath.cellIndex % sectionInfo.actualNumberOfColumns;
-				cell.frame = CGRectMake(sectionInfo.origin.x + column * sectionInfo.sectionColumnWidth + cellInfo.origin.x,
+				cellInfo.cellView.frame = CGRectMake(sectionInfo.origin.x + column * columnWidth + (columnWidth - sectionInfo.sectionColumnWidth) / 2 + cellInfo.origin.x,
 										sectionInfo.origin.y + sectionInfo.headerHeight + row * sectionInfo.sectionRowHeight + cellInfo.origin.y,
 										cellInfo.size.width, cellInfo.size.height);
-				[self addSubview:cell];
+				[self addSubview:cellInfo.cellView];
 			}
 		}
 	}
+	self.firstVisibleCellIndexPath = firstVisibleCellIndexPath;
+	self.lastVisibleCellIndexPath = lastVisibleCellIndexPath;
 }
 
 - (void)cleanGridView {
@@ -583,7 +600,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 - (UIGridViewCell *)dequeReusableCellWithIdentifier:(NSString *)identifier {
 	UIGridViewCell *cell = nil;
-	NSMutableArray *queue = [self.cellQueueDictionary objectForKey:cell.reuseIdentifier];
+	NSMutableArray *queue = [self.cellQueueDictionary objectForKey:identifier];
 	if (queue) {
 		cell = [queue deque];
 	}
