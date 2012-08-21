@@ -38,7 +38,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @property (assign, nonatomic) CGRect frame;
 @property (assign, nonatomic) CGPoint origin;
 @property (assign, nonatomic) CGSize size;
-@property (strong, nonatomic) UIGridViewCell *cellView;
+@property (retain, nonatomic) UIGridViewCell *cellView;
 
 @end
 
@@ -49,6 +49,11 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @synthesize horizontalAlignment = _horizontalAlignment;
 @synthesize verticalAlignment = _verticalAlignment;
 @synthesize frame = _frame;
+
+- (void)dealloc {
+	[_cellView release];
+	[super dealloc];
+}
 
 - (CGPoint)origin {
 	return self.frame.origin;
@@ -75,7 +80,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @interface UIGridViewSectionInfo : NSObject
 
 @property (assign, nonatomic) NSUInteger sectionIndex;
-@property (strong, nonatomic) NSMutableArray *cellsInfo;
+@property (retain, nonatomic) NSMutableArray *cellsInfo;
 @property (assign, nonatomic) CGFloat headerHeight;
 @property (assign, nonatomic) CGFloat footerHeight;
 @property (assign, nonatomic) NSUInteger numberOfColumns;
@@ -85,8 +90,8 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @property (assign, nonatomic) CGRect frame;
 @property (assign, nonatomic) CGPoint origin;
 @property (assign, nonatomic) CGSize size;
-@property (strong, nonatomic) UIView *headerView;
-@property (strong, nonatomic) UIView *footerView;
+@property (retain, nonatomic) UIView *headerView;
+@property (retain, nonatomic) UIView *footerView;
 
 @end
 
@@ -101,6 +106,13 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @synthesize sectionColumnWidth = _sectionColumnWidth;
 @synthesize sectionRowHeight = _sectionRowHeight;
 @synthesize frame = _frame;
+
+- (void)dealloc {
+	[_cellsInfo release];
+	[_headerView release];
+	[_footerView release];
+	[super dealloc];
+}
 
 - (NSMutableArray *)cellsInfo {
 	if (!_cellsInfo) {
@@ -134,8 +146,8 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @interface UIGridViewCell ()
 
 @property (copy, nonatomic) NSString *reuseIdentifier;
-@property (strong, nonatomic) UIView *contentView;
-@property (strong, nonatomic) UIButton *deleteButton;
+@property (retain, nonatomic) UIView *contentView;
+@property (retain, nonatomic) UIButton *deleteButton;
 @property (assign, nonatomic) BOOL canDelete;
 
 - (void)startShake;
@@ -147,17 +159,17 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 @interface UIGridView ()
 
-@property (strong, nonatomic) NSMutableDictionary *cellQueueDictionary;
-@property (strong, nonatomic) NSMutableArray *sectionsInfo;
+@property (retain, nonatomic) NSMutableDictionary *cellQueueDictionary;
+@property (retain, nonatomic) NSMutableArray *sectionsInfo;
 @property (assign, nonatomic) NSInteger firstVisibleSection;
 @property (assign, nonatomic) NSInteger lastVisibleSection;
-@property (strong, nonatomic) NSIndexPath *firstVisibleCellIndexPath;
-@property (strong, nonatomic) NSIndexPath *lastVisibleCellIndexPath;
+@property (retain, nonatomic) NSIndexPath *firstVisibleCellIndexPath;
+@property (retain, nonatomic) NSIndexPath *lastVisibleCellIndexPath;
 @property (assign, nonatomic) BOOL needsUpdateCellsInfo;
 @property (assign, nonatomic) CGSize lastSize;
 
-@property (strong, nonatomic) UIGestureRecognizer *tapGesture;
-@property (strong, nonatomic) UIGestureRecognizer *longPressGesture;
+@property (retain, nonatomic) UIGestureRecognizer *tapGesture;
+@property (retain, nonatomic) UIGestureRecognizer *longPressGesture;
 
 - (void)initGridView;
 - (void)enqueReusableCell:(UIGridViewCell *)cell;
@@ -228,13 +240,25 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	self.firstVisibleSection = -1;
 	self.lastVisibleSection = -1;
 
-	self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+	self.tapGesture = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)] autorelease];
 	self.tapGesture.delegate = self;
-	self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+	self.longPressGesture = [[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)] autorelease];
 	self.longPressGesture.delegate = self;
 	[self.tapGesture requireGestureRecognizerToFail:self.longPressGesture];
 	[self addGestureRecognizer:self.tapGesture];
 	[self addGestureRecognizer:self.longPressGesture];
+}
+
+- (void)dealloc {
+	[_gridHeaderView release];
+	[_gridFooterView release];
+	[_cellQueueDictionary release];
+	[_sectionsInfo release];
+	[_firstVisibleCellIndexPath release];
+	[_lastVisibleCellIndexPath release];
+	[_tapGesture release];
+	[_longPressGesture release];
+	[super dealloc];
 }
 
 - (void)layoutSubviews {
@@ -291,6 +315,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 			}
 			sectionInfo.sectionColumnWidth = MAX(sectionInfo.sectionColumnWidth, cellInfo.preferredInsets.left + cellInfo.preferredInsets.right + cellInfo.size.width);
 			sectionInfo.sectionRowHeight = MAX(sectionInfo.sectionRowHeight, cellInfo.preferredInsets.top + cellInfo.preferredInsets.bottom + cellInfo.size.height);
+			[cellInfo release];
 		}
 		for (NSUInteger j = 0; j < [sectionInfo.cellsInfo count]; j++) {
 			UIGridViewCellInfo *cellInfo = [sectionInfo.cellsInfo objectAtIndex:j];
@@ -340,6 +365,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 		} else {
 			sectionInfo.numberOfColumns = 0;
 		}
+		[sectionInfo release];
 	}
 }
 
@@ -650,18 +676,18 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 }
 
 - (NSArray *)indexPathsForVisibleCells {
-	NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+	NSMutableArray *indexPaths = [[[NSMutableArray alloc] init] autorelease];
 	if (self.firstVisibleCellIndexPath) {
 		for (NSIndexPath *indexPath = self.firstVisibleCellIndexPath; indexPath && [indexPath compare:self.lastVisibleCellIndexPath] != NSOrderedDescending;
 			 indexPath = [self nextIndexPath:indexPath]) {
 			[indexPaths addObject:indexPath];
 		}
 	}
-	return [indexPaths copy];
+	return [[indexPaths copy] autorelease];
 }
 
 - (NSArray *)visibleCells {
-	NSMutableArray *visibleCells = [[NSMutableArray alloc] init];
+	NSMutableArray *visibleCells = [[[NSMutableArray alloc] init] autorelease];
 	if (self.firstVisibleCellIndexPath) {
 		for (NSIndexPath *indexPath = self.firstVisibleCellIndexPath; indexPath && [indexPath compare:self.lastVisibleCellIndexPath] != NSOrderedDescending;
 			 indexPath = [self nextIndexPath:indexPath]) {
@@ -671,7 +697,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 			}
 		}
 	}
-	return [visibleCells copy];
+	return [[visibleCells copy] autorelease];
 }
 
 - (NSMutableDictionary *)cellQueueDictionary {
@@ -691,7 +717,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 - (void)enqueReusableCell:(UIGridViewCell *)cell {
 	NSMutableArray *queue = [self.cellQueueDictionary objectForKey:cell.reuseIdentifier];
 	if (!queue) {
-		queue = [[NSMutableArray alloc] init];
+		queue = [[[NSMutableArray alloc] init] autorelease];
 		[self.cellQueueDictionary setObject:queue forKey:cell.reuseIdentifier];
 	}
 	[queue enque:cell];
@@ -831,7 +857,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	if (self) {
 		self.reuseIdentifier = identifier;
 
-		self.contentView = [[UIView alloc] initWithFrame:self.bounds];
+		self.contentView = [[[UIView alloc] initWithFrame:self.bounds] autorelease];
 		self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[self addSubview:self.contentView];
 
@@ -846,6 +872,12 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	return self;
 }
 
+- (void)dealloc {
+	[_reuseIdentifier release];
+	[_contentView release];
+	[_deleteButton release];
+	[super dealloc];
+}
 - (void)setEditing:(BOOL)editing {
 	if (_editing != editing) {
 		_editing = editing;

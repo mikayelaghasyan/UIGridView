@@ -59,8 +59,8 @@ typedef enum {
 
 @interface UIGridView : UIScrollView <UIGestureRecognizerDelegate>
 
-@property (weak, nonatomic) id<UIGridViewDataSource> dataSource;
-@property (weak, nonatomic) id<UIGridViewDelegate> delegate;
+@property (assign, nonatomic) id<UIGridViewDataSource> dataSource;
+@property (assign, nonatomic) id<UIGridViewDelegate> delegate;
 
 @property (assign, nonatomic) CGSize cellSize;
 @property (assign, nonatomic) UIEdgeInsets cellPreferredInsets;
@@ -69,8 +69,8 @@ typedef enum {
 @property (assign, nonatomic) CGFloat sectionHeaderHeight;
 @property (assign, nonatomic) CGFloat sectionFooterHeight;
 
-@property (strong, nonatomic) UIView *gridHeaderView;
-@property (strong, nonatomic) UIView *gridFooterView;
+@property (retain, nonatomic) UIView *gridHeaderView;
+@property (retain, nonatomic) UIView *gridFooterView;
 
 @property (assign, nonatomic) BOOL editing;
 
@@ -88,7 +88,7 @@ typedef enum {
 @interface UIGridViewCell : UIView
 
 @property (copy, nonatomic, readonly) NSString *reuseIdentifier;
-@property (strong, nonatomic, readonly) UIView *contentView;
+@property (retain, nonatomic, readonly) UIView *contentView;
 @property (assign, nonatomic) BOOL editing;
 
 - (id)initWithReuseIdentifier:(NSString *)identifier;
