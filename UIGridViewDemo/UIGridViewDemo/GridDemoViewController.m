@@ -72,10 +72,10 @@
 	NSUInteger result = 0;
 	switch (section) {
 		case 0:
-			result = 5000;
+			result = 50;
 			break;
 		case 1:
-			result = 10000;
+			result = 100;
 			break;
 		default:
 			break;
@@ -108,6 +108,20 @@
 	imageView = (UIImageView *)[cell.contentView viewWithTag:1];
 	imageView.image = image;
 	return cell;
+}
+
+- (BOOL)gridView:(UIGridView *)gridView canEditCellAtIndexPath:(NSIndexPath *)indexPath {
+	BOOL canEdit = YES;
+	switch (indexPath.section) {
+		case 0:
+			if (indexPath.cellIndex == 0) {
+				canEdit = NO;
+			}
+			break;
+		default:
+			break;
+	}
+	return canEdit;
 }
 
 #pragma mark - UIGridView delegate

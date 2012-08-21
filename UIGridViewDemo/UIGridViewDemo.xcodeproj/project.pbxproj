@@ -30,6 +30,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		43EAABC015E2A62400502AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 43EAABA115E26E1700502AA2 /* UIGridView.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 43FFD551158F167700B5A453;
+			remoteInfo = UIGridView;
+		};
+		43EAABC215E2A62400502AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 43EAABA115E26E1700502AA2 /* UIGridView.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 43FFD561158F167700B5A453;
+			remoteInfo = UIGridViewTests;
+		};
 		43FFD5AC158F16CF00B5A453 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 43FFD57D158F16CF00B5A453 /* Project object */;
@@ -40,7 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		43EAABA115E26E1700502AA2 /* UIGridView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = file; name = UIGridView.xcodeproj; path = ../UIGridView/UIGridView.xcodeproj; sourceTree = "<group>"; };
+		43EAABA115E26E1700502AA2 /* UIGridView.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UIGridView.xcodeproj; path = ../UIGridView/UIGridView.xcodeproj; sourceTree = "<group>"; };
 		43EAABA615E26EAC00502AA2 /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		43EAABA815E26F3700502AA2 /* GridDemoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridDemoViewController.h; sourceTree = "<group>"; };
 		43EAABA915E26F3700502AA2 /* GridDemoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GridDemoViewController.m; sourceTree = "<group>"; };
@@ -94,6 +108,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43EAABBC15E2A62400502AA2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				43EAABC115E2A62400502AA2 /* libUIGridView.a */,
+				43EAABC315E2A62400502AA2 /* UIGridViewTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		43FFD57B158F16CF00B5A453 = {
 			isa = PBXGroup;
 			children = (
@@ -231,6 +254,12 @@
 			mainGroup = 43FFD57B158F16CF00B5A453;
 			productRefGroup = 43FFD587158F16CF00B5A453 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 43EAABBC15E2A62400502AA2 /* Products */;
+					ProjectRef = 43EAABA115E26E1700502AA2 /* UIGridView.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				43FFD585158F16CF00B5A453 /* UIGridViewDemo */,
@@ -238,6 +267,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		43EAABC115E2A62400502AA2 /* libUIGridView.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libUIGridView.a;
+			remoteRef = 43EAABC015E2A62400502AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		43EAABC315E2A62400502AA2 /* UIGridViewTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UIGridViewTests.octest;
+			remoteRef = 43EAABC215E2A62400502AA2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		43FFD584158F16CF00B5A453 /* Resources */ = {

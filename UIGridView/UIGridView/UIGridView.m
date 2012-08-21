@@ -139,7 +139,10 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @property (strong, nonatomic) NSIndexPath *firstVisibleCellIndexPath;
 @property (strong, nonatomic) NSIndexPath *lastVisibleCellIndexPath;
 @property (assign, nonatomic) BOOL needsUpdateCellsInfo;
-@property (assign, nonatomic) CGRect lastBounds;
+@property (assign, nonatomic) CGSize lastSize;
+
+@property (strong, nonatomic) UIGestureRecognizer *tapGesture;
+@property (strong, nonatomic) UIGestureRecognizer *longPressGesture;
 
 - (void)initGridView;
 - (void)enqueReusableCell:(UIGridViewCell *)cell;
@@ -153,6 +156,13 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 - (NSIndexPath *)lastIndexPath;
 - (NSIndexPath *)nextIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)previousIndexPath:(NSIndexPath *)indexPath;
+
+- (NSIndexPath *)indexPathOfCellAtLocation:(CGPoint)location;
+- (UIGridViewCell *)cellAtLocation:(CGPoint)location;
+- (UIGridViewCell *)cellAtIndexPath:(NSIndexPath *)indexPath;
+
+- (void)handleTap:(UIGestureRecognizer *)sender;
+- (void)handleLongPress:(UIGestureRecognizer *)sender;
 
 @end
 
@@ -176,7 +186,10 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @synthesize firstVisibleCellIndexPath = _firstVisibleCellIndexPath;
 @synthesize lastVisibleCellIndexPath = _lastVisibleCellIndexPath;
 @synthesize needsUpdateCellsInfo = _needsUpdateCellsInfo;
-@synthesize lastBounds = _lastBounds;
+@synthesize lastSize = _lastSize;
+
+@synthesize tapGesture = _tapGesture;
+@synthesize longPressGesture = _longPressGesture;
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
 	self = [super initWithCoder:aDecoder];
@@ -196,23 +209,32 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 - (void)initGridView {
 	self.directionalLockEnabled = YES;
+	self.delaysContentTouches = NO;
+
 	self.needsUpdateCellsInfo = YES;
 	self.firstVisibleSection = -1;
 	self.lastVisibleSection = -1;
+
+	self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+	self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+	self.longPressGesture.delegate = self;
+	[self.tapGesture requireGestureRecognizerToFail:self.longPressGesture];
+	[self addGestureRecognizer:self.tapGesture];
+	[self addGestureRecognizer:self.longPressGesture];
 }
 
 - (void)layoutSubviews {
-	BOOL boundsChanged = !CGRectEqualToRect(self.bounds, self.lastBounds);
-	if (boundsChanged) {
+	BOOL sizeChanged = !CGSizeEqualToSize(self.bounds.size, self.lastSize);
+	if (sizeChanged || self.needsUpdateCellsInfo) {
 		[self cleanGridView];
 	}
 	if (self.needsUpdateCellsInfo) {
 		self.needsUpdateCellsInfo = NO;
 		[self updateCellsInfo];
 	}
-	if (boundsChanged) {
+	if (sizeChanged || self.needsUpdateCellsInfo) {
 		[self calculateFrames];
-		self.lastBounds = self.bounds;
+		self.lastSize = self.bounds.size;
 	}
 	[self layoutGridView];
 }
@@ -404,7 +426,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	self.lastVisibleSection = lastVisibleSection;
 
 	sectionInfo = [self.sectionsInfo objectAtIndex:self.firstVisibleSection];
-	NSInteger row = (self.contentOffset.y - sectionInfo.origin.y - sectionInfo.headerHeight) / sectionInfo.sectionRowHeight;
+	NSInteger row = MAX((self.contentOffset.y - sectionInfo.origin.y - sectionInfo.headerHeight) / sectionInfo.sectionRowHeight, 0);
 	NSInteger cellIndex = row * sectionInfo.actualNumberOfColumns;
 	NSIndexPath *firstVisibleCellIndexPath = [NSIndexPath indexPathForCellIndex:cellIndex inSection:self.firstVisibleSection];
 	if (cellIndex >= [sectionInfo.cellsInfo count]) {
@@ -575,6 +597,44 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	return result;
 }
 
+- (NSIndexPath *)indexPathOfCellAtLocation:(CGPoint)location {
+	NSIndexPath *result = nil;
+	UIGridViewSectionInfo *sectionInfo = nil;
+	for (sectionInfo in self.sectionsInfo) {
+		if (CGRectContainsPoint(sectionInfo.frame, location)) {
+			NSInteger column = (location.x - sectionInfo.origin.x) / sectionInfo.sectionColumnWidth;
+			NSInteger row = (location.y - sectionInfo.origin.y - sectionInfo.headerHeight) / sectionInfo.sectionRowHeight;
+			NSInteger cellIndex = row * sectionInfo.actualNumberOfColumns + column;
+			if (cellIndex < [sectionInfo.cellsInfo count]) {
+				result = [NSIndexPath indexPathForCellIndex:cellIndex inSection:sectionInfo.sectionIndex];
+			}
+			break;
+		}
+	}
+	return result;
+}
+
+- (UIGridViewCell *)cellAtLocation:(CGPoint)location {
+	UIGridViewCell *result = nil;
+	NSIndexPath *indexPath = [self indexPathOfCellAtLocation:location];
+	if (indexPath) {
+		UIGridViewSectionInfo *sectionInfo = [self.sectionsInfo objectAtIndex:indexPath.section];
+		UIGridViewCellInfo *cellInfo = [sectionInfo.cellsInfo objectAtIndex:indexPath.cellIndex];
+		result = cellInfo.cellView;
+	}
+	return result;
+}
+
+- (UIGridViewCell *)cellAtIndexPath:(NSIndexPath *)indexPath {
+	UIGridViewCell *result = nil;
+	if (indexPath) {
+		UIGridViewSectionInfo *sectionInfo = [self.sectionsInfo objectAtIndex:indexPath.section];
+		UIGridViewCellInfo *cellInfo = [sectionInfo.cellsInfo objectAtIndex:indexPath.cellIndex];
+		result = cellInfo.cellView;
+	}
+	return result;
+}
+
 - (NSMutableDictionary *)cellQueueDictionary {
 	if (!_cellQueueDictionary) {
 		_cellQueueDictionary = [[NSMutableDictionary alloc] init];
@@ -608,6 +668,64 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 }
 
 - (void)reloadData {
+	self.needsUpdateCellsInfo = YES;
+	[self setNeedsLayout];
+}
+
+- (void)handleTap:(UIGestureRecognizer *)sender {
+	NSLog(@"handleTap: %d", [sender state]);
+}
+
+- (void)handleLongPress:(UIGestureRecognizer *)sender {
+	NSLog(@"handleLongPress: %d", [sender state]);
+}
+
+#pragma mark - UIGestureRecognizer delegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+	if (gestureRecognizer == self.longPressGesture) {
+		CGPoint location = [touch locationInView:self];
+		NSIndexPath *indexPath = [self indexPathOfCellAtLocation:location];
+		UIGridViewCell *cell = [self cellAtIndexPath:indexPath];
+		if (cell && CGRectContainsPoint(cell.frame, location)) {
+			BOOL canEdit = YES;
+			if ([self.dataSource respondsToSelector:@selector(gridView:canEditCellAtIndexPath:)]) {
+				canEdit = [self.dataSource gridView:self canEditCellAtIndexPath:indexPath];
+			}
+			return canEdit;
+		}
+		return NO;
+	}
+	return YES;
+}
+
+#pragma mark - Touch handling
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+	UITouch *touch = [touches anyObject];
+	CGPoint location = [touch locationInView:self];
+	UIGridViewCell *cell = [self cellAtLocation:location];
+	if (cell && CGRectContainsPoint(cell.frame, location)) {
+		[cell setHighlighted:YES];
+	}
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+	UITouch *touch = [touches anyObject];
+	CGPoint location = [touch locationInView:self];
+	UIGridViewCell *cell = [self cellAtLocation:location];
+	if (cell && CGRectContainsPoint(cell.frame, location)) {
+		[cell setHighlighted:NO];
+	}
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+	UITouch *touch = [touches anyObject];
+	CGPoint location = [touch locationInView:self];
+	UIGridViewCell *cell = [self cellAtLocation:location];
+	if (cell && CGRectContainsPoint(cell.frame, location)) {
+		[cell setHighlighted:NO];
+	}
 }
 
 @end
@@ -616,6 +734,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 @property (copy, nonatomic) NSString *reuseIdentifier;
 @property (strong, nonatomic) UIView *contentView;
+@property (strong, nonatomic) UIView *highlightView;
 
 @end
 
@@ -623,6 +742,8 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize contentView = _contentView;
+@synthesize highlighted = _highlighted;
+@synthesize highlightView = _highlightView;
 
 - (id)initWithReuseIdentifier:(NSString *)identifier {
 	self = [super init];
@@ -631,8 +752,18 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 		self.contentView = [[UIView alloc] initWithFrame:self.bounds];
 		self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[self addSubview:self.contentView];
+		self.highlightView = [[UIView alloc] initWithFrame:self.bounds];
+		self.highlightView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+		self.highlightView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
+		self.highlightView.hidden = YES;
+		[self addSubview:self.highlightView];
 	}
 	return self;
+}
+
+- (void)setHighlighted:(BOOL)highlighted {
+	_highlighted = highlighted;
+	self.highlightView.hidden = !highlighted;
 }
 
 @end

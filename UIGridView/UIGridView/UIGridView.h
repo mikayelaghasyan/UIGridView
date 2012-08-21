@@ -55,7 +55,7 @@ typedef enum {
 @class UIGridViewCell;
 @protocol UIGridViewDataSource;
 
-@interface UIGridView : UIScrollView
+@interface UIGridView : UIScrollView <UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) id<UIGridViewDataSource> dataSource;
 @property (weak, nonatomic) id<UIGridViewDelegate> delegate;
@@ -79,6 +79,7 @@ typedef enum {
 
 @property (copy, nonatomic, readonly) NSString *reuseIdentifier;
 @property (strong, nonatomic, readonly) UIView *contentView;
+@property (assign, nonatomic) BOOL highlighted;
 
 - (id)initWithReuseIdentifier:(NSString *)identifier;
 
@@ -96,6 +97,8 @@ typedef enum {
 
 - (NSString *)gridView:(UIGridView *)gridView titleForHeaderInSection:(NSUInteger)section;
 - (NSString *)gridView:(UIGridView *)gridView titleForFooterInSection:(NSUInteger)section;
+
+- (BOOL)gridView:(UIGridView *)gridView canEditCellAtIndexPath:(NSIndexPath *)indexPath;
 
 @required
 
