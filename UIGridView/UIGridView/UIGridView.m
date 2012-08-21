@@ -8,6 +8,7 @@
 
 #import "UIGridView.h"
 #import "NSMutableArray+Queue.h"
+#import <QuartzCore/QuartzCore.h>
 
 static NSUInteger const kIndexPathIndexesCount = 2;
 
@@ -130,6 +131,20 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 
 @end
 
+@interface UIGridViewCell ()
+
+@property (copy, nonatomic) NSString *reuseIdentifier;
+@property (strong, nonatomic) UIView *contentView;
+@property (strong, nonatomic) UIButton *deleteButton;
+@property (assign, nonatomic) BOOL canDelete;
+
+- (void)startShake;
+- (void)endShake;
+- (void)zoomIn;
+- (void)zoomOut;
+
+@end
+
 @interface UIGridView ()
 
 @property (strong, nonatomic) NSMutableDictionary *cellQueueDictionary;
@@ -157,10 +172,6 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 - (NSIndexPath *)nextIndexPath:(NSIndexPath *)indexPath;
 - (NSIndexPath *)previousIndexPath:(NSIndexPath *)indexPath;
 
-- (NSIndexPath *)indexPathOfCellAtLocation:(CGPoint)location;
-- (UIGridViewCell *)cellAtLocation:(CGPoint)location;
-- (UIGridViewCell *)cellAtIndexPath:(NSIndexPath *)indexPath;
-
 - (void)handleTap:(UIGestureRecognizer *)sender;
 - (void)handleLongPress:(UIGestureRecognizer *)sender;
 
@@ -178,6 +189,8 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 @synthesize sectionFooterHeight = _sectionFooterHeight;
 @synthesize gridHeaderView = _gridHeaderView;
 @synthesize gridFooterView = _gridFooterView;
+
+@synthesize editing = _editing;
 
 @synthesize cellQueueDictionary = _cellQueueDictionary;
 @synthesize sectionsInfo = _sectionsInfo;
@@ -216,6 +229,7 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	self.lastVisibleSection = -1;
 
 	self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+	self.tapGesture.delegate = self;
 	self.longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
 	self.longPressGesture.delegate = self;
 	[self.tapGesture requireGestureRecognizerToFail:self.longPressGesture];
@@ -635,6 +649,31 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	return result;
 }
 
+- (NSArray *)indexPathsForVisibleCells {
+	NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+	if (self.firstVisibleCellIndexPath) {
+		for (NSIndexPath *indexPath = self.firstVisibleCellIndexPath; indexPath && [indexPath compare:self.lastVisibleCellIndexPath] != NSOrderedDescending;
+			 indexPath = [self nextIndexPath:indexPath]) {
+			[indexPaths addObject:indexPath];
+		}
+	}
+	return [indexPaths copy];
+}
+
+- (NSArray *)visibleCells {
+	NSMutableArray *visibleCells = [[NSMutableArray alloc] init];
+	if (self.firstVisibleCellIndexPath) {
+		for (NSIndexPath *indexPath = self.firstVisibleCellIndexPath; indexPath && [indexPath compare:self.lastVisibleCellIndexPath] != NSOrderedDescending;
+			 indexPath = [self nextIndexPath:indexPath]) {
+			UIGridViewCell *cell = [self cellAtIndexPath:indexPath];
+			if (cell) {
+				[visibleCells addObject:cell];
+			}
+		}
+	}
+	return [visibleCells copy];
+}
+
 - (NSMutableDictionary *)cellQueueDictionary {
 	if (!_cellQueueDictionary) {
 		_cellQueueDictionary = [[NSMutableDictionary alloc] init];
@@ -672,21 +711,70 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 	[self setNeedsLayout];
 }
 
+- (void)setEditing:(BOOL)editing {
+	if (_editing != editing) {
+		_editing = editing;
+		NSArray *visibleCellsIndexPaths = [self indexPathsForVisibleCells];
+		for (NSIndexPath *indexPath in visibleCellsIndexPaths) {
+			UIGridViewCell *cell = [self cellAtIndexPath:indexPath];
+			if (cell) {
+				BOOL canDelete = YES;
+				if ([self.dataSource respondsToSelector:@selector(gridView:canDeleteCellAtIndexPath:)]) {
+					canDelete = [self.dataSource gridView:self canDeleteCellAtIndexPath:indexPath];
+				}
+				[cell setCanDelete:canDelete];
+
+				BOOL canEdit = YES;
+				if ([self.dataSource respondsToSelector:@selector(gridView:canEditCellAtIndexPath:)]) {
+					canEdit = [self.dataSource gridView:self canEditCellAtIndexPath:indexPath];
+				}
+				if (canEdit) {
+					[cell setEditing:editing];
+				}
+			}
+		}
+	}
+}
+
 - (void)handleTap:(UIGestureRecognizer *)sender {
-	NSLog(@"handleTap: %d", [sender state]);
+	CGPoint location = [sender locationInView:self];
+	NSIndexPath *indexPath = [self indexPathOfCellAtLocation:location];
+	UIGridViewCell *cell = [self cellAtIndexPath:indexPath];
+	if (!self.editing && cell && CGRectContainsPoint(cell.frame, location)) {
+		if ([self.delegate respondsToSelector:@selector(gridView:didSelectCellAtIndexPath:)]) {
+			[self.delegate gridView:self didSelectCellAtIndexPath:indexPath];
+		}
+	}
 }
 
 - (void)handleLongPress:(UIGestureRecognizer *)sender {
-	NSLog(@"handleLongPress: %d", [sender state]);
+	CGPoint location = [sender locationInView:self];
+	NSIndexPath *indexPath = [self indexPathOfCellAtLocation:location];
+	UIGridViewCell *cell = [self cellAtIndexPath:indexPath];
+	if (cell && CGRectContainsPoint(cell.frame, location)) {
+		NSLog(@"Gesture state: %d", sender.state);
+		if (sender.state == UIGestureRecognizerStateBegan) {
+			[cell zoomIn];
+		} else if (sender.state == UIGestureRecognizerStateEnded ||
+				   sender.state == UIGestureRecognizerStateFailed ||
+				   sender.state == UIGestureRecognizerStateCancelled) {
+			[cell zoomOut];
+		}
+		if (!self.editing) {
+			[self setEditing:YES];
+		}
+	}
 }
 
 #pragma mark - UIGestureRecognizer delegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-	if (gestureRecognizer == self.longPressGesture) {
-		CGPoint location = [touch locationInView:self];
-		NSIndexPath *indexPath = [self indexPathOfCellAtLocation:location];
-		UIGridViewCell *cell = [self cellAtIndexPath:indexPath];
+	CGPoint location = [touch locationInView:self];
+	NSIndexPath *indexPath = [self indexPathOfCellAtLocation:location];
+	UIGridViewCell *cell = [self cellAtIndexPath:indexPath];
+	if (gestureRecognizer == self.tapGesture) {
+		return (cell && CGRectContainsPoint(cell.frame, location));
+	} else if (gestureRecognizer == self.longPressGesture) {
 		if (cell && CGRectContainsPoint(cell.frame, location)) {
 			BOOL canEdit = YES;
 			if ([self.dataSource respondsToSelector:@selector(gridView:canEditCellAtIndexPath:)]) {
@@ -700,12 +788,12 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 }
 
 #pragma mark - Touch handling
-
+/*
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	UITouch *touch = [touches anyObject];
 	CGPoint location = [touch locationInView:self];
 	UIGridViewCell *cell = [self cellAtLocation:location];
-	if (cell && CGRectContainsPoint(cell.frame, location)) {
+	if (!self.editing && cell && CGRectContainsPoint(cell.frame, location)) {
 		[cell setHighlighted:YES];
 	}
 }
@@ -727,43 +815,83 @@ static NSUInteger const kIndexPathIndexesCount = 2;
 		[cell setHighlighted:NO];
 	}
 }
-
-@end
-
-@interface UIGridViewCell ()
-
-@property (copy, nonatomic) NSString *reuseIdentifier;
-@property (strong, nonatomic) UIView *contentView;
-@property (strong, nonatomic) UIView *highlightView;
-
+*/
 @end
 
 @implementation UIGridViewCell
 
 @synthesize reuseIdentifier = _reuseIdentifier;
 @synthesize contentView = _contentView;
-@synthesize highlighted = _highlighted;
-@synthesize highlightView = _highlightView;
+@synthesize deleteButton = _deleteButton;
+@synthesize editing = _editing;
+@synthesize canDelete = _canDelete;
 
 - (id)initWithReuseIdentifier:(NSString *)identifier {
 	self = [super init];
 	if (self) {
 		self.reuseIdentifier = identifier;
+
 		self.contentView = [[UIView alloc] initWithFrame:self.bounds];
 		self.contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 		[self addSubview:self.contentView];
-		self.highlightView = [[UIView alloc] initWithFrame:self.bounds];
-		self.highlightView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		self.highlightView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.4];
-		self.highlightView.hidden = YES;
-		[self addSubview:self.highlightView];
+
+		self.deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		self.deleteButton.frame = CGRectMake(-10.0, -10.0, 40.0, 40.0);
+		[self.deleteButton setImage:[UIImage imageNamed:@"delete_default.png"] forState:UIControlStateNormal];
+		self.deleteButton.adjustsImageWhenHighlighted = YES;
+		[self.deleteButton addTarget:self action:@selector(deleteButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+		self.deleteButton.hidden = YES;
+		[self addSubview:self.deleteButton];
 	}
 	return self;
 }
 
-- (void)setHighlighted:(BOOL)highlighted {
-	_highlighted = highlighted;
-	self.highlightView.hidden = !highlighted;
+- (void)setEditing:(BOOL)editing {
+	if (_editing != editing) {
+		_editing = editing;
+		self.deleteButton.hidden = !editing || !self.canDelete;
+		if (editing) {
+			[self startShake];
+		} else {
+			[self endShake];
+		}
+	}
+}
+
+- (void)startShake {
+	CABasicAnimation* anim = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
+	[anim setToValue:[NSNumber numberWithFloat:0.0f]];
+	[anim setFromValue:[NSNumber numberWithDouble:M_PI/64]];
+	[anim setDuration:0.1];
+	[anim setRepeatCount:NSUIntegerMax];
+	[anim setAutoreverses:YES];
+	[self.layer addAnimation:anim forKey:@"shake"];
+}
+
+- (void)endShake {
+	[self.layer removeAnimationForKey:@"shake"];
+}
+
+- (void)zoomIn {
+	NSLog(@"Zoom in");
+	CABasicAnimation* anim = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+	[anim setToValue:[NSNumber numberWithFloat:1.5f]];
+	[anim setFromValue:[NSNumber numberWithDouble:1.0f]];
+	[anim setDuration:0.1];
+	[anim setRemovedOnCompletion:NO];
+	[anim setFillMode:kCAFillModeForwards];
+	[self.layer addAnimation:anim forKey:@"zoomIn"];
+}
+
+- (void)zoomOut {
+	NSLog(@"Zoom out");
+	CABasicAnimation* anim = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+	[anim setToValue:[NSNumber numberWithFloat:1.0f]];
+	[anim setFromValue:[NSNumber numberWithDouble:1.5f]];
+	[anim setDuration:0.1];
+	[anim setRemovedOnCompletion:NO];
+	[anim setFillMode:kCAFillModeForwards];
+	[self.layer addAnimation:anim forKey:@"zoomOut"];
 }
 
 @end

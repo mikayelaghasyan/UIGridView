@@ -50,6 +50,8 @@ typedef enum {
 - (UIView *)gridView:(UIGridView *)gridView viewForHeaderInSection:(NSUInteger)section;
 - (UIView *)gridView:(UIGridView *)gridView viewForFooterInSection:(NSUInteger)section;
 
+- (void)gridView:(UIGridView *)gridView didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
 @class UIGridViewCell;
@@ -70,8 +72,16 @@ typedef enum {
 @property (strong, nonatomic) UIView *gridHeaderView;
 @property (strong, nonatomic) UIView *gridFooterView;
 
+@property (assign, nonatomic) BOOL editing;
+
 - (UIGridViewCell *)dequeReusableCellWithIdentifier:(NSString *)identifier;
 - (void)reloadData;
+
+- (NSIndexPath *)indexPathOfCellAtLocation:(CGPoint)location;
+- (UIGridViewCell *)cellAtLocation:(CGPoint)location;
+- (UIGridViewCell *)cellAtIndexPath:(NSIndexPath *)indexPath;
+- (NSArray *)indexPathsForVisibleCells;
+- (NSArray *)visibleCells;
 
 @end
 
@@ -79,7 +89,7 @@ typedef enum {
 
 @property (copy, nonatomic, readonly) NSString *reuseIdentifier;
 @property (strong, nonatomic, readonly) UIView *contentView;
-@property (assign, nonatomic) BOOL highlighted;
+@property (assign, nonatomic) BOOL editing;
 
 - (id)initWithReuseIdentifier:(NSString *)identifier;
 
@@ -99,6 +109,7 @@ typedef enum {
 - (NSString *)gridView:(UIGridView *)gridView titleForFooterInSection:(NSUInteger)section;
 
 - (BOOL)gridView:(UIGridView *)gridView canEditCellAtIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)gridView:(UIGridView *)gridView canDeleteCellAtIndexPath:(NSIndexPath *)indexPath;
 
 @required
 

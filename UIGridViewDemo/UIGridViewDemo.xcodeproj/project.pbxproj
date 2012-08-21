@@ -13,6 +13,7 @@
 		43EAABB015E270E600502AA2 /* libUIGridView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43EAABAF15E270E600502AA2 /* libUIGridView.a */; };
 		43EAABB315E272AE00502AA2 /* ferrari.png in Resources */ = {isa = PBXBuildFile; fileRef = 43EAABB115E272AE00502AA2 /* ferrari.png */; };
 		43EAABB415E272AE00502AA2 /* porsche.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 43EAABB215E272AE00502AA2 /* porsche.jpg */; };
+		43EAABD015E3988A00502AA2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43EAABCF15E3988A00502AA2 /* QuartzCore.framework */; };
 		43FFD58B158F16CF00B5A453 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD58A158F16CF00B5A453 /* UIKit.framework */; };
 		43FFD58D158F16CF00B5A453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD58C158F16CF00B5A453 /* Foundation.framework */; };
 		43FFD58F158F16CF00B5A453 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD58E158F16CF00B5A453 /* CoreGraphics.framework */; };
@@ -44,6 +45,13 @@
 			remoteGlobalIDString = 43FFD561158F167700B5A453;
 			remoteInfo = UIGridViewTests;
 		};
+		43EAABCD15E3987E00502AA2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 43EAABA115E26E1700502AA2 /* UIGridView.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 43FFD550158F167700B5A453;
+			remoteInfo = UIGridView;
+		};
 		43FFD5AC158F16CF00B5A453 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 43FFD57D158F16CF00B5A453 /* Project object */;
@@ -61,6 +69,7 @@
 		43EAABAF15E270E600502AA2 /* libUIGridView.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUIGridView.a; path = "../../../Library/Developer/Xcode/DerivedData/UIGridView-fxbrpxhsdvgmywgwuqlnfkzjhpaf/Build/Products/Debug-iphoneos/libUIGridView.a"; sourceTree = "<group>"; };
 		43EAABB115E272AE00502AA2 /* ferrari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ferrari.png; sourceTree = "<group>"; };
 		43EAABB215E272AE00502AA2 /* porsche.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = porsche.jpg; sourceTree = "<group>"; };
+		43EAABCF15E3988A00502AA2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		43FFD586158F16CF00B5A453 /* UIGridViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIGridViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FFD58A158F16CF00B5A453 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		43FFD58C158F16CF00B5A453 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -86,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43EAABD015E3988A00502AA2 /* QuartzCore.framework in Frameworks */,
 				43EAABB015E270E600502AA2 /* libUIGridView.a in Frameworks */,
 				43FFD58B158F16CF00B5A453 /* UIKit.framework in Frameworks */,
 				43FFD58D158F16CF00B5A453 /* Foundation.framework in Frameworks */,
@@ -120,7 +130,6 @@
 		43FFD57B158F16CF00B5A453 = {
 			isa = PBXGroup;
 			children = (
-				43EAABAF15E270E600502AA2 /* libUIGridView.a */,
 				43EAABA115E26E1700502AA2 /* UIGridView.xcodeproj */,
 				43FFD592158F16CF00B5A453 /* UIGridViewDemo */,
 				43FFD5AE158F16CF00B5A453 /* UIGridViewDemoTests */,
@@ -145,7 +154,9 @@
 				43FFD58C158F16CF00B5A453 /* Foundation.framework */,
 				43FFD58E158F16CF00B5A453 /* CoreGraphics.framework */,
 				43FFD590158F16CF00B5A453 /* CoreData.framework */,
+				43EAABCF15E3988A00502AA2 /* QuartzCore.framework */,
 				43FFD5A7158F16CF00B5A453 /* SenTestingKit.framework */,
+				43EAABAF15E270E600502AA2 /* libUIGridView.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -210,6 +221,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				43EAABCE15E3987E00502AA2 /* PBXTargetDependency */,
 			);
 			name = UIGridViewDemo;
 			productName = UIGridViewDemo;
@@ -347,6 +359,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		43EAABCE15E3987E00502AA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = UIGridView;
+			targetProxy = 43EAABCD15E3987E00502AA2 /* PBXContainerItemProxy */;
+		};
 		43FFD5AD158F16CF00B5A453 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 43FFD585158F16CF00B5A453 /* UIGridViewDemo */;
@@ -431,7 +448,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/UIGridView-fxbrpxhsdvgmywgwuqlnfkzjhpaf/Build/Products/Debug-iphoneos\"",
 				);
-				OTHER_LDFLAGS = "-all_load";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -447,7 +467,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/UIGridView-fxbrpxhsdvgmywgwuqlnfkzjhpaf/Build/Products/Debug-iphoneos\"",
 				);
-				OTHER_LDFLAGS = "-all_load";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

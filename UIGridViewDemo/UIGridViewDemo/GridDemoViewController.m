@@ -152,4 +152,8 @@
 	return 0;
 }
 
+- (void)gridView:(UIGridView *)gridView didSelectCellAtIndexPath:(NSIndexPath *)indexPath {
+	NSLog(@"Did select cell at index path: %@", indexPath);
+}
+
 @end

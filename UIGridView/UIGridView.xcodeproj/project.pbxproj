@@ -10,6 +10,7 @@
 		43D8742915ADB7EC00231127 /* NSMutableArray+Queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 43D8742715ADB7EC00231127 /* NSMutableArray+Queue.h */; };
 		43D8742A15ADB7EC00231127 /* NSMutableArray+Queue.m in Sources */ = {isa = PBXBuildFile; fileRef = 43D8742815ADB7EC00231127 /* NSMutableArray+Queue.m */; };
 		43EAABAB15E26F6E00502AA2 /* UIGridView.h in Headers */ = {isa = PBXBuildFile; fileRef = 43FFD559158F167700B5A453 /* UIGridView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		43EAABCC15E3941A00502AA2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43EAABC915E3940A00502AA2 /* QuartzCore.framework */; };
 		43FFD555158F167700B5A453 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD554158F167700B5A453 /* Foundation.framework */; };
 		43FFD55B158F167700B5A453 /* UIGridView.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FFD55A158F167700B5A453 /* UIGridView.m */; };
 		43FFD563158F167700B5A453 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43FFD562158F167700B5A453 /* SenTestingKit.framework */; };
@@ -34,6 +35,9 @@
 /* Begin PBXFileReference section */
 		43D8742715ADB7EC00231127 /* NSMutableArray+Queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Queue.h"; sourceTree = "<group>"; };
 		43D8742815ADB7EC00231127 /* NSMutableArray+Queue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Queue.m"; sourceTree = "<group>"; };
+		43EAABC915E3940A00502AA2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		43EAABD115E3A59300502AA2 /* delete_default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = delete_default.png; sourceTree = "<group>"; };
+		43EAABD215E3A59300502AA2 /* delete_default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "delete_default@2x.png"; sourceTree = "<group>"; };
 		43FFD551158F167700B5A453 /* libUIGridView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUIGridView.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		43FFD554158F167700B5A453 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		43FFD558158F167700B5A453 /* UIGridView-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIGridView-Prefix.pch"; sourceTree = "<group>"; };
@@ -55,6 +59,7 @@
 			files = (
 				43FFD555158F167700B5A453 /* Foundation.framework in Frameworks */,
 				43FFD5C1158F1A0700B5A453 /* UIKit.framework in Frameworks */,
+				43EAABCC15E3941A00502AA2 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +101,7 @@
 			children = (
 				43FFD554158F167700B5A453 /* Foundation.framework */,
 				43FFD5BF158F18A100B5A453 /* UIKit.framework */,
+				43EAABC915E3940A00502AA2 /* QuartzCore.framework */,
 				43FFD562158F167700B5A453 /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
@@ -104,6 +110,8 @@
 		43FFD556158F167700B5A453 /* UIGridView */ = {
 			isa = PBXGroup;
 			children = (
+				43EAABD115E3A59300502AA2 /* delete_default.png */,
+				43EAABD215E3A59300502AA2 /* delete_default@2x.png */,
 				43FFD559158F167700B5A453 /* UIGridView.h */,
 				43FFD55A158F167700B5A453 /* UIGridView.m */,
 				43FFD557158F167700B5A453 /* Supporting Files */,
